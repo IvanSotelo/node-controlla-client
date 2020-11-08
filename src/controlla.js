@@ -1,4 +1,5 @@
 import request from 'request-promise'
+import url from 'url'
 
 /**
  * @name ControllaApi
@@ -102,4 +103,117 @@ export default class ControllaApi {
    *  @property {object} [query] - An object of all query parameters
    *  @property {string} [intermediatePath] - Overwrites with specified path
    */
+
+  /**
+   * @name makeRequestHeader
+   * @function
+   * Creates a requestOptions object based on the default template for one
+   * @param {string} uri
+   * @param {object} [options] - an object containing fields and formatting how the
+   */
+  makeRequestHeader (uri, options = {}) {
+    return {
+      rejectUnauthorized: this.strictSSL,
+      method: options.method || 'GET',
+      uri,
+      json: true,
+      ...options
+    }
+  }
+
+  /**
+   * @typedef makeRequestHeaderOptions
+   * @type {object}
+   * @property {string} [method] - HTTP Request Method. ie GET, POST, PUT, DELETE
+   */
+
+  /**
+   * @name makeUri
+   * @function
+   * Creates a URI object for a given pathname
+   * @param {object} [options] - an object containing path information
+   */
+  makeUri ({
+    pathname, query, intermediatePath, encode = false
+  }) {
+    const intermediateToUse = this.intermediatePath || intermediatePath
+    const tempPath = intermediateToUse || `/rest/api/${this.apiVersion}`
+    const uri = url.format({
+      protocol: this.protocol,
+      hostname: this.host,
+      port: this.port,
+      pathname: `${this.base}${tempPath}${pathname}`,
+      query
+    })
+    return encode ? encodeURI(uri) : decodeURIComponent(uri)
+  }
+
+  /**
+   * @typedef makeUriOptions
+   * @type {object}
+   * @property {string} pathname - The url after the /rest/api/version
+   * @property {object} query - a query object
+   * @property {string} intermediatePath - If specified will overwrite the /rest/api/version section
+   */
+
+  /**
+   * @name makeWebhookUri
+   * @function
+   * Creates a URI object for a given pathName
+   * @param {object} [options] - An options object specifying uri information
+   */
+  makeWebhookUri ({ pathname, intermediatePath }) {
+    const intermediateToUse = this.intermediatePath || intermediatePath
+    const tempPath = intermediateToUse || `/rest/webhooks/${this.webhookVersion}`
+    const uri = url.format({
+      protocol: this.protocol,
+      hostname: this.host,
+      port: this.port,
+      pathname: `${this.base}${tempPath}${pathname}`
+    })
+    return decodeURIComponent(uri)
+  }
+
+  /**
+   * @typedef makeWebhookUriOptions
+   * @type {object}
+   * @property {string} pathname - The url after the /rest/webhooks
+   * @property {string} intermediatePath - If specified will overwrite the /rest/webhooks section
+   */
+
+  /**
+   * @name doRequest
+   * @function
+   * Does a request based on the requestOptions object
+   * @param {object} requestOptions - fields on this object get posted as a request header for
+   * requests to controlla
+   */
+  async doRequest (requestOptions) {
+    const options = {
+      ...this.baseOptions,
+      ...requestOptions
+    }
+
+    const response = await this.request(options)
+
+    if (response) {
+      if (Array.isArray(response.errorMessages) && response.errorMessages.length > 0) {
+        throw new Error(response.errorMessages.join(', '))
+      }
+    }
+
+    return response
+  }
+
+  /** Generic Get Request
+   * [Jira Doc](https://docs.atlassian.com/jira-software/REST/cloud/2/)
+   * @name genericGet
+   * @function
+   * @param {string} endpoint - Rest API endpoint
+   */
+  genericGet (endpoint) {
+    return this.doRequest(this.makeRequestHeader(this.makeUri({
+      pathname: `/${endpoint}`
+    })))
+  }
 }
