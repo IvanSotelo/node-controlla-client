@@ -1,9 +1,9 @@
-# JavaScript JIRA API for node.js #
+# JavaScript Controlla API for node.js #
 
 A node.js module, which provides an object oriented wrapper for the Controlla Rest API.
 
 [![Documentation](https://img.shields.io/badge/Documentation--green.svg)]()
-[![Controlla Rest API](https://img.shields.io/badge/Jira%20Rest%20API--green.svg)]()
+[![Controlla Rest API](https://img.shields.io/badge/Controlla%20Rest%20API--green.svg)]()
 [![Run tests](https://github.com/controlla/node-controlla-client/workflows/Run%20tests/badge.svg)]()
 [![npm](https://img.shields.io/npm/v/controlla-client.svg)](https://www.npmjs.com/package/controlla-client)
 [![Downloads](https://img.shields.io/npm/dm/controlla-client.svg)](https://npmjs.com/controlla-client)
