@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
     "lint": "eslint ./",
-    "test": "npm run lint && mocha --require @babel/register && npm run docs-build"
+    "test": "npm run lint && mocha --require @babel/register"
   },
   "repository": {
     "type": "git",
