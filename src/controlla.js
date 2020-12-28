@@ -8,10 +8,10 @@ import url from 'url'
  */
 export default class ControllaApi {
   /**
-     * @constructor
-     * @function
-     * @param {ControllaApiOptions} options
-     */
+   * @constructor
+   * @function
+   * @param {ControllaApiOptions} options
+   */
   constructor (options) {
     this.protocol = options.protocol || 'http'
     this.host = options.host
